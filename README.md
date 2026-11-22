@@ -158,6 +158,23 @@ gives is known everywhere. Two neighbours that derive the same variable must agr
 value one block is missing is re-derived from its neighbour through the join. That is the Kravitz rule in code:
 every point knows its neighbour, the rule is shared, and a point that contradicts its neighbour is not trusted.
 
+## The cube and the product detector (built 2026-11-22)
+
+`cube.py`: the saddle in a cube. The 24 rotations and the six faces they show; the views through each face (the
+top full, the sides half with the hole at the centre; tilt the saddle and the hole moves to tan of the tilt and
+leaves the cube at 45 degrees); a chain of cells where the seams carry a message (matched is 0, a declared
+bridge is 1), only the bridges are stored, the chain regrows from them, and a corrupted cell is caught at a named
+seam; the whole (the seams) invariant under every rotation; and collapse, a block to one cell by majority face,
+a tie being a fork. `python tests/test_cube.py`, 8 checks.
+
+`product.py`: the cube used as an instrument on data. Given three columns, is z a product of x and y up to a
+shift? The hidden offsets are read off the shape (the pinch of each side view, where the bow tie's two edges
+cross) and cross-checked by a least-squares fit; the rule is kept and the residual measured. Bars written first
+in `benchmark/PLAN-PRODUCT.md`; results in `benchmark/RESULTS-PRODUCT.md`: the residual is the noise and nothing
+more on noisy products, non-products are refused, the shape reading is typically within 2 percent with a known
+blind spot when the pinch sits at the edge of the range, and a real column that is a product minus a price is
+reported as not a product until the price is given, then stored as the rule and the price alone.
+
 ## Not built yet
 
 Relation tokens through a fine-tune (so a field name or a source clause is one token instead of several), the
