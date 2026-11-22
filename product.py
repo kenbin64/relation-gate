@@ -57,13 +57,20 @@ def read_shape(x, y, z):
 
 
 # ---------------------------------------------------------------------------------------------- the established check
-def fit(x, y, z, extra=None):
+def fit(x, y, z, extra=None, with_xy=True):
     """Least squares of z on 1, x, y, xy (and an extra column w when one is given). If z = (x - a)(y - b) + c then
     z = ab + c - b x - a y + xy, so the coefficient of xy is 1 (or a scale), of x is -b, of y is -a, and the
-    constant is ab + c. With w, the rule is a product plus k w: a product and another column side by side."""
-    cols = [[1.0] * len(x), x, y, [xi * yi for xi, yi in zip(x, y, strict=True)]]
+    constant is ab + c. With w, the rule is a product plus k w: a product and another column side by side.
+    With with_xy False the xy column is left out: the plain linear fit, used to ask whether the product term is
+    needed at all (a sum like z = x + y is fitted perfectly with or without it, so it is not a product)."""
+    cols = [[1.0] * len(x), x, y]
+    if with_xy: cols.append([xi * yi for xi, yi in zip(x, y, strict=True)])
     if extra is not None: cols.append(list(extra))
     n = len(cols)
+    if not with_xy:
+        coef = solve([[sum(cols[r][i] * cols[c][i] for i in range(len(x))) for c in range(n)] for r in range(n)],
+                     [sum(cols[r][i] * z[i] for i in range(len(x))) for r in range(n)])
+        return [sum(coef[j] * cols[j][i] for j in range(n)) for i in range(len(x))]        # the linear fit's values
     ata = [[sum(cols[r][i] * cols[c][i] for i in range(len(x))) for c in range(n)] for r in range(n)]
     atz = [sum(cols[r][i] * z[i] for i in range(len(x))) for r in range(n)]
     coef = solve(ata, atz)
@@ -107,11 +114,15 @@ def detect(x, y, z, precision=0.01, extra=None):
     residual = [zi - ri for zi, ri in zip(z, rule, strict=True)]
     sr = spread(residual)
     reached = 1 - sr / sz if sz else 0.0
-    product = reached >= 0.5
+    # the product term must be NEEDED: the fit without xy must leave at least twice the residual the full fit leaves
+    linear = fit(x, y, z, extra, with_xy=False)
+    sr_linear = spread([zi - li for zi, li in zip(z, linear, strict=True)])
+    needs_xy = sr_linear >= 2 * sr and sr_linear > 1e-9 * max(sz, 1e-9)
+    product = reached >= 0.5 and needs_xy
     agree = {k: abs(shape[k] - f[k]) <= 0.05 * max(sz, 1e-9) + 0.02 * max(spread(x if k == 'a' else y) if k != 'c' else sz, 1e-9) for k in ('a', 'b', 'c')}
     text = f'z = {s:.4g} * (x - {a:.4g}) * (y - {b:.4g}) + {s * c:.4g}' + (f' + {k:.4g} * w' if extra is not None else '')
     return {'product': product, 'rule': text if product else None,
-            'shape': shape, 'fit': f, 'agree': agree, 'reached': reached, 'spread_z': sz, 'spread_residual': sr,
+            'shape': shape, 'fit': f, 'agree': agree, 'reached': reached, 'spread_z': sz, 'spread_residual': sr, 'spread_without_xy': sr_linear,
             'bytes_z': packed(z, precision), 'bytes_residual': packed(residual, precision) if product else None, 'residual': residual}
 
 
