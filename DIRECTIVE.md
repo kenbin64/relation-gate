@@ -17,7 +17,8 @@ folder exists so that following it can be verified by software that does not gue
    arithmetic. Your sums are the least reliable thing you produce; the rule's are exact.
 4. **The edges are values, not errors.** Division by zero is `refuse`. Two valid readings is `fork {a, b}`, and a
    fork is decided by a stated rule or by a person, never by you picking the likelier one. A loop has a cap, and
-   at the cap it collapses to its point or refuses; it never continues.
+   at the cap it collapses to its point or refuses; it never continues. A cap of seven is six levels and a
+   resolution, six faces of a die and then the whole die: the seventh act is the collapse, not another step.
 5. **Logic is arithmetic over 0 and 1.** A check is a product of facts (`pass = shape * sourced * dated`); an
    alternative is a sum minus the product. Write the truth table, not the prose.
 6. **Every rule carries its label and its source.** `[Established]` with a source that can be opened,

@@ -63,8 +63,8 @@ check('impossible', p.ask('half_adder', s=1, c=1), 'refuse: no 0/1 assignment sa
 
 print('the ladder and the gate')
 ladder, point = p.climb('phi', 1)
-assert len(ladder) == 7, 'the cap is seven steps'
-check('collapse', point, '34/21')
+assert len(ladder) == 6, 'a cap of seven is six levels and a resolution'
+check('collapse', point, '21/13')
 g = p.check('answer', 'Data centres used 415 TWh in 2024 [iea]', ledger={'iea'})
 check('gate pass', g, "{'pass': 1, 'cited': 1, 'sourced': 1, 'tokens': 10, 'spent': 10}")
 for _ in range(3):
@@ -230,7 +230,7 @@ except TypeError as e:
     passed += 1; print(f'  ok  {e}')
 for n in (1, 3, 7):
     q = Program(f'climb c(x) -> y:\n    y = x + 1\n    after {n}: collapse')
-    ladder, _ = q.climb('c', 0)
-    assert len(ladder) == n
-passed += 1; print('  ok  every cap halts in at most n steps')
+    ladder, point = q.climb('c', 0)
+    assert len(ladder) == n - 1 and point == Value(n - 1), 'n - 1 rungs, then the resolution'
+passed += 1; print('  ok  every cap halts: n - 1 rungs and a resolution')
 print(f'\n{passed} checks passed')

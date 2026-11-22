@@ -56,8 +56,11 @@ def tests_pass(workdir):
     # the same run every time: fixed hash seed, and no bytecode cache (a mutant written in the same second with the
     # same file size as the last one would otherwise run the LAST mutant's compiled code)
     env = dict(os.environ, PYTHONHASHSEED='0', PYTHONDONTWRITEBYTECODE='1')
-    r = subprocess.run([sys.executable, '-B', os.path.join(workdir, 'tests', 'test_relation.py')], capture_output=True,
-                       text=True, timeout=300, cwd=workdir, env=env)
+    try:
+        r = subprocess.run([sys.executable, '-B', os.path.join(workdir, 'tests', 'test_relation.py')], capture_output=True,
+                           text=True, timeout=120, cwd=workdir, env=env)
+    except subprocess.TimeoutExpired:
+        return False          # a mutant that hangs the tests (a loop that no longer ends) is caught by the clock, not by an assert
     return r.returncode == 0
 
 

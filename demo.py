@@ -72,12 +72,12 @@ ask(lambda: p.ask('adder', s0=1, s1=1, c=0), label='which inputs give 3 with no 
 ask(lambda: p.ask('adder', s0=0, s1=0, c=1), label='which inputs give 4?')
 ask(lambda: p.ask('adder', a0=1, b0=1, s0=1), label='1 + 1 with a low bit of 1?')
 
-print('\n3. the ladder: seven steps, then the gate collapses it')
+print('\n3. the ladder: a cap of seven is six rungs and a resolution, six faces of a die and then the whole die')
 ladder, point = p.climb('phi', 1)
 for k, x in enumerate(ladder, 1):
     gap = abs(float(x) - PHI) / abs(1 - PHI)
     print(f'   step {k}: {str(x):6s} = {float(x):.6f}   gap left {gap * 100:6.2f} percent of the start   (0.382^{k} = {0.382 ** k * 100:5.2f})')
-print(f'   collapse -> {point!r}  (phi is {PHI:.6f}; the eighth press would be the next level, not an eighth step)')
+print(f'   resolution -> {point!r}  (phi is {PHI:.6f}; the seventh act is the collapse of the six into one, and the next press starts the next level)')
 
 print('\n4. the gate over claims, with the ledger from the episode')
 ledger = {'iea-energy-ai', 'uptime-2026', 'epri-water', 'lbnl-2024'}

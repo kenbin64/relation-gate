@@ -400,16 +400,18 @@ class Program:
 
     # ------------------------------------------------------------------------------------------ the ladder
     def climb(self, name, start, **constants):
-        """Run one step at most `cap` times from `start`; return the ladder and the collapsed point."""
+        """Climb the ladder from `start`: `cap` is six levels and a resolution (Ken, 2026-11-22: "7 levels is always
+        the max, really 6 levels and a resolution"). The steps are cap - 1 rungs; the last act is not a step but the
+        collapse of what is there into one point. Returns the rungs and the point."""
         c = self.climbs[name]
         expr = sympify(c.step.replace('^', '**'))
         consts = {Symbol(k): sympify(v) for k, v in constants.items()}
         x, ladder = sympify(start), []
-        for _ in range(c.cap):
+        for _ in range(c.cap - 1):
             x = expr.subs(consts).subs(Symbol(c.x), x)
             if x.has(zoo, nan, oo): return ladder, Refuse('pole reached on the ladder')
             ladder.append(x)
-        return ladder, Value(ladder[-1])
+        return ladder, Value(ladder[-1] if ladder else x)
 
     # ------------------------------------------------------------------------------------------ the gate
     def check(self, gate_name, text, ledger=(), key=None, input=''):

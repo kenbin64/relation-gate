@@ -130,7 +130,9 @@ checks (R U R' U' must have order 6) and replaced with the standard cubie model.
     bridge c1 c2                          a mismatch made on purpose, declared; refused if the hands already match
 
 A saddle has exactly six orientations under the rotations of a cube, three axes by two hands, and the turn table
-is computed from the rotation of the saddle's own points, not typed in. `program.seam(a, b)` gives the verdict at
+is computed from the rotation of the saddle's own points, not typed in. Six faces of a die, and the seventh thing
+is the whole die: the same count as the ladder's cap, six rungs and a resolution (`climb` runs cap − 1 rungs and
+the last act is the collapse of what is there into one point). `program.seam(a, b)` gives the verdict at
 one seam, `program.lattice()` at every seam.
 
     block building(it) -> total:
