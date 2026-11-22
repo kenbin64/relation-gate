@@ -1,0 +1,721 @@
+{
+ "original": [
+  {
+   "id": "classify-1",
+   "kind": "classify",
+   "input": "The frame arrived cracked and nobody answered my emails.",
+   "want": "negative"
+  },
+  {
+   "id": "classify-2",
+   "kind": "classify",
+   "input": "Beautiful print, carefully packed, and it came two days early.",
+   "want": "positive"
+  },
+  {
+   "id": "classify-3",
+   "kind": "classify",
+   "input": "The colours are far duller than the photo. I want a refund.",
+   "want": "negative"
+  },
+  {
+   "id": "classify-4",
+   "kind": "classify",
+   "input": "Exactly what I ordered. The staff were kind and quick.",
+   "want": "positive"
+  },
+  {
+   "id": "classify-5",
+   "kind": "classify",
+   "input": "It arrived on Tuesday in a brown box.",
+   "want": "neutral"
+  },
+  {
+   "id": "classify-6",
+   "kind": "classify",
+   "input": "Worst purchase I have made this year. It fell apart in a week.",
+   "want": "negative"
+  },
+  {
+   "id": "classify-7",
+   "kind": "classify",
+   "input": "I love it. It hangs over the fireplace and everyone asks about it.",
+   "want": "positive"
+  },
+  {
+   "id": "classify-8",
+   "kind": "classify",
+   "input": "The order contained one frame and one mounting kit.",
+   "want": "neutral"
+  },
+  {
+   "id": "classify-9",
+   "kind": "classify",
+   "input": "Great value and it looks even better in person.",
+   "want": "positive"
+  },
+  {
+   "id": "classify-10",
+   "kind": "classify",
+   "input": "They charged me twice and it took a month to get the money back.",
+   "want": "negative"
+  },
+  {
+   "id": "extract-1",
+   "kind": "extract",
+   "input": "Invoice 4471 dated 2026-03-14 for plumbing repair, total due $1,284.50.",
+   "want": {
+    "date": "2026-03-14",
+    "amount": 1284.5
+   }
+  },
+  {
+   "id": "extract-2",
+   "kind": "extract",
+   "input": "Paid on March 3, 2026: annual licence renewal, $240.00, ref LX-88.",
+   "want": {
+    "date": "2026-03-03",
+    "amount": 240
+   }
+  },
+  {
+   "id": "extract-3",
+   "kind": "extract",
+   "input": "Ref 77120. Amount: $58.99. Date of service: 2025-11-30. Thank you.",
+   "want": {
+    "date": "2025-11-30",
+    "amount": 58.99
+   }
+  },
+  {
+   "id": "extract-4",
+   "kind": "extract",
+   "input": "On 7 January 2026 we billed $12,400.00 for roof replacement (job 31).",
+   "want": {
+    "date": "2026-01-07",
+    "amount": 12400
+   }
+  },
+  {
+   "id": "extract-5",
+   "kind": "extract",
+   "input": "Statement 2026-06-01. Balance forward 0.00. New charges $315.75.",
+   "want": {
+    "date": "2026-06-01",
+    "amount": 315.75
+   }
+  },
+  {
+   "id": "extract-6",
+   "kind": "extract",
+   "input": "Order #5580 shipped. Charged $19.00 on December 12, 2025.",
+   "want": {
+    "date": "2025-12-12",
+    "amount": 19
+   }
+  },
+  {
+   "id": "extract-7",
+   "kind": "extract",
+   "input": "Consulting, 40 hours, invoiced 2026-02-28. Total: $6,000.",
+   "want": {
+    "date": "2026-02-28",
+    "amount": 6000
+   }
+  },
+  {
+   "id": "extract-8",
+   "kind": "extract",
+   "input": "Receipt: parking, $7.50, 2026-04-09, lot C.",
+   "want": {
+    "date": "2026-04-09",
+    "amount": 7.5
+   }
+  },
+  {
+   "id": "extract-9",
+   "kind": "extract",
+   "input": "Due $1,050.25 for tuition. Issued 15 August 2025. Account 2219.",
+   "want": {
+    "date": "2025-08-15",
+    "amount": 1050.25
+   }
+  },
+  {
+   "id": "extract-10",
+   "kind": "extract",
+   "input": "Renewal notice dated 2026-09-30: domain registration, $10.44.",
+   "want": {
+    "date": "2026-09-30",
+    "amount": 10.44
+   }
+  },
+  {
+   "id": "calculate-1",
+   "kind": "calculate",
+   "input": "price: 40\nsaving per use: 3\nuses: 24",
+   "want": 32
+  },
+  {
+   "id": "calculate-2",
+   "kind": "calculate",
+   "input": "price: 120\nsaving per use: 2.5\nuses: 30",
+   "want": -45
+  },
+  {
+   "id": "calculate-3",
+   "kind": "calculate",
+   "input": "price: 15\nsaving per use: 0.75\nuses: 52",
+   "want": 24
+  },
+  {
+   "id": "calculate-4",
+   "kind": "calculate",
+   "input": "price: 299\nsaving per use: 12\nuses: 20",
+   "want": -59
+  },
+  {
+   "id": "calculate-5",
+   "kind": "calculate",
+   "input": "price: 60\nsaving per use: 4\nuses: 15",
+   "want": 0
+  },
+  {
+   "id": "calculate-6",
+   "kind": "calculate",
+   "input": "price: 89.99\nsaving per use: 6.5\nuses: 12",
+   "want": -11.99
+  },
+  {
+   "id": "calculate-7",
+   "kind": "calculate",
+   "input": "price: 25\nsaving per use: 1.25\nuses: 100",
+   "want": 100
+  },
+  {
+   "id": "calculate-8",
+   "kind": "calculate",
+   "input": "price: 450\nsaving per use: 35\nuses: 10",
+   "want": -100
+  },
+  {
+   "id": "calculate-9",
+   "kind": "calculate",
+   "input": "price: 9.99\nsaving per use: 0.4\nuses: 36",
+   "want": 4.41
+  },
+  {
+   "id": "calculate-10",
+   "kind": "calculate",
+   "input": "price: 180\nsaving per use: 7.25\nuses: 26",
+   "want": 8.5
+  },
+  {
+   "id": "format-1",
+   "kind": "format",
+   "input": "Fix the gallery signature. Priority 2. Tags: art, urgent.",
+   "want": {
+    "title": "Fix the gallery signature",
+    "priority": 2,
+    "tags": [
+     "art",
+     "urgent"
+    ]
+   }
+  },
+  {
+   "id": "format-2",
+   "kind": "format",
+   "input": "Renew the domain. Priority 1. Tags: billing.",
+   "want": {
+    "title": "Renew the domain",
+    "priority": 1,
+    "tags": [
+     "billing"
+    ]
+   }
+  },
+  {
+   "id": "format-3",
+   "kind": "format",
+   "input": "Write the release notes. Priority 4. Tags: docs, release, team.",
+   "want": {
+    "title": "Write the release notes",
+    "priority": 4,
+    "tags": [
+     "docs",
+     "release",
+     "team"
+    ]
+   }
+  },
+  {
+   "id": "format-4",
+   "kind": "format",
+   "input": "Call the plumber. Priority 3. Tags: home.",
+   "want": {
+    "title": "Call the plumber",
+    "priority": 3,
+    "tags": [
+     "home"
+    ]
+   }
+  },
+  {
+   "id": "format-5",
+   "kind": "format",
+   "input": "Back up the photographs. Priority 2. Tags: files, weekly.",
+   "want": {
+    "title": "Back up the photographs",
+    "priority": 2,
+    "tags": [
+     "files",
+     "weekly"
+    ]
+   }
+  },
+  {
+   "id": "format-6",
+   "kind": "format",
+   "input": "Order more canvas. Priority 5. Tags: art, supplies.",
+   "want": {
+    "title": "Order more canvas",
+    "priority": 5,
+    "tags": [
+     "art",
+     "supplies"
+    ]
+   }
+  },
+  {
+   "id": "format-7",
+   "kind": "format",
+   "input": "Update the resume. Priority 1. Tags: jobs, writing.",
+   "want": {
+    "title": "Update the resume",
+    "priority": 1,
+    "tags": [
+     "jobs",
+     "writing"
+    ]
+   }
+  },
+  {
+   "id": "format-8",
+   "kind": "format",
+   "input": "Test the contact form. Priority 3. Tags: site, qa.",
+   "want": {
+    "title": "Test the contact form",
+    "priority": 3,
+    "tags": [
+     "site",
+     "qa"
+    ]
+   }
+  },
+  {
+   "id": "format-9",
+   "kind": "format",
+   "input": "Book the dentist. Priority 4. Tags: health.",
+   "want": {
+    "title": "Book the dentist",
+    "priority": 4,
+    "tags": [
+     "health"
+    ]
+   }
+  },
+  {
+   "id": "format-10",
+   "kind": "format",
+   "input": "Pay the electricity bill. Priority 1. Tags: billing, home.",
+   "want": {
+    "title": "Pay the electricity bill",
+    "priority": 1,
+    "tags": [
+     "billing",
+     "home"
+    ]
+   }
+  }
+ ],
+ "heldout": [
+  {
+   "id": "h-classify-1",
+   "kind": "classify",
+   "input": "Two of the four chairs were broken and the courier just shrugged.",
+   "want": "negative"
+  },
+  {
+   "id": "h-classify-2",
+   "kind": "classify",
+   "input": "Fast delivery, solid build, and the instructions were clear. Very happy.",
+   "want": "positive"
+  },
+  {
+   "id": "h-classify-3",
+   "kind": "classify",
+   "input": "The parcel contained the lamp and a spare bulb.",
+   "want": "neutral"
+  },
+  {
+   "id": "h-classify-4",
+   "kind": "classify",
+   "input": "Still waiting for a refund after six weeks. Avoid this shop.",
+   "want": "negative"
+  },
+  {
+   "id": "h-classify-5",
+   "kind": "classify",
+   "input": "It does exactly what it says and the support team was lovely.",
+   "want": "positive"
+  },
+  {
+   "id": "h-classify-6",
+   "kind": "classify",
+   "input": "Delivered on the 12th. The box was blue.",
+   "want": "neutral"
+  },
+  {
+   "id": "h-classify-7",
+   "kind": "classify",
+   "input": "Cheap material, it tore the first time I used it.",
+   "want": "negative"
+  },
+  {
+   "id": "h-classify-8",
+   "kind": "classify",
+   "input": "My kids adore it and it has survived a whole summer of use.",
+   "want": "positive"
+  },
+  {
+   "id": "h-classify-9",
+   "kind": "classify",
+   "input": "The kit includes two brushes, a tray and a roller.",
+   "want": "neutral"
+  },
+  {
+   "id": "h-classify-10",
+   "kind": "classify",
+   "input": "Brilliant. I have already ordered a second one for my sister.",
+   "want": "positive"
+  },
+  {
+   "id": "h-extract-1",
+   "kind": "extract",
+   "input": "3,955.26 dollars paid on 01/11/2026 for freight.",
+   "want": {
+    "date": "2026-01-11",
+    "amount": 3955.26
+   }
+  },
+  {
+   "id": "h-extract-2",
+   "kind": "extract",
+   "input": "Date: January 3, 2026 | Ref 532 | Total 12,523.06 dollars",
+   "want": {
+    "date": "2026-01-03",
+    "amount": 12523.06
+   }
+  },
+  {
+   "id": "h-extract-3",
+   "kind": "extract",
+   "input": "$5,580.66 paid on 03/20/2026 for freight.",
+   "want": {
+    "date": "2026-03-20",
+    "amount": 5580.66
+   }
+  },
+  {
+   "id": "h-extract-4",
+   "kind": "extract",
+   "input": "Date: Mar 9, 2026 | Ref 452 | Total USD 13,732.71",
+   "want": {
+    "date": "2026-03-09",
+    "amount": 13732.71
+   }
+  },
+  {
+   "id": "h-extract-5",
+   "kind": "extract",
+   "input": "Date: 2026-06-08 | Ref 540 | Total USD 5,708.27",
+   "want": {
+    "date": "2026-06-08",
+    "amount": 5708.27
+   }
+  },
+  {
+   "id": "h-extract-6",
+   "kind": "extract",
+   "input": "$13,259.38 paid on 2025/09/07 for window cleaning.",
+   "want": {
+    "date": "2025-09-07",
+    "amount": 13259.38
+   }
+  },
+  {
+   "id": "h-extract-7",
+   "kind": "extract",
+   "input": "Date: 25 September 2026 | Ref 392 | Total 6,960.48 dollars",
+   "want": {
+    "date": "2026-09-25",
+    "amount": 6960.48
+   }
+  },
+  {
+   "id": "h-extract-8",
+   "kind": "extract",
+   "input": "Date: Dec 3, 2026 | Ref 185 | Total USD 19,267.43",
+   "want": {
+    "date": "2026-12-03",
+    "amount": 19267.43
+   }
+  },
+  {
+   "id": "h-extract-9",
+   "kind": "extract",
+   "input": "Invoice 2790 issued Apr 18, 2026. Amount due USD 943.89.",
+   "want": {
+    "date": "2026-04-18",
+    "amount": 943.89
+   }
+  },
+  {
+   "id": "h-extract-10",
+   "kind": "extract",
+   "input": "Invoice 5302 issued 2025-03-10. Amount due 12,871.43 dollars.",
+   "want": {
+    "date": "2025-03-10",
+    "amount": 12871.43
+   }
+  },
+  {
+   "id": "h-calculate-1",
+   "kind": "calculate",
+   "input": "cost: 229.99\nsaves per use: 5.5\ntimes used: 9",
+   "want": -180.49
+  },
+  {
+   "id": "h-calculate-2",
+   "kind": "calculate",
+   "input": "cost: 155\nsaves per use: 8.75\ntimes used: 93",
+   "want": 658.75
+  },
+  {
+   "id": "h-calculate-3",
+   "kind": "calculate",
+   "input": "cost: 145.99\nsaves per use: 3.75\ntimes used: 94",
+   "want": 206.51
+  },
+  {
+   "id": "h-calculate-4",
+   "kind": "calculate",
+   "input": "price: 390.5\nsaving each time: 7.5\nnumber of uses: 63",
+   "want": 82
+  },
+  {
+   "id": "h-calculate-5",
+   "kind": "calculate",
+   "input": "cost: 291.5\nsaves per use: 3\ntimes used: 72",
+   "want": -75.5
+  },
+  {
+   "id": "h-calculate-6",
+   "kind": "calculate",
+   "input": "price: 460\nsaving per use: 7.5\nuses: 26",
+   "want": -265
+  },
+  {
+   "id": "h-calculate-7",
+   "kind": "calculate",
+   "input": "price: 151.99\nsaving per use: 3.5\nuses: 86",
+   "want": 149.01
+  },
+  {
+   "id": "h-calculate-8",
+   "kind": "calculate",
+   "input": "cost: 289.5\nsaves per use: 5.75\ntimes used: 47",
+   "want": -19.25
+  },
+  {
+   "id": "h-calculate-9",
+   "kind": "calculate",
+   "input": "price: 216.99\nsaving per use: 1.5\nuses: 57",
+   "want": -131.49
+  },
+  {
+   "id": "h-calculate-10",
+   "kind": "calculate",
+   "input": "price: 383\nsaving per use: 9.25\nuses: 72",
+   "want": 283
+  },
+  {
+   "id": "h-format-1",
+   "kind": "format",
+   "input": "Clean the gutters (priority 1), tagged garden.",
+   "want": {
+    "title": "Clean the gutters",
+    "priority": 1,
+    "tags": [
+     "garden"
+    ]
+   }
+  },
+  {
+   "id": "h-format-2",
+   "kind": "format",
+   "input": "Email the framer. Priority: 5. Tags - art, weekly",
+   "want": {
+    "title": "Email the framer",
+    "priority": 5,
+    "tags": [
+     "art",
+     "weekly"
+    ]
+   }
+  },
+  {
+   "id": "h-format-3",
+   "kind": "format",
+   "input": "Update the price list. Priority: 3. Tags - urgent, team",
+   "want": {
+    "title": "Update the price list",
+    "priority": 3,
+    "tags": [
+     "urgent",
+     "team"
+    ]
+   }
+  },
+  {
+   "id": "h-format-4",
+   "kind": "format",
+   "input": "Tags: team, home. Book the venue. Priority 3.",
+   "want": {
+    "title": "Book the venue",
+    "priority": 3,
+    "tags": [
+     "team",
+     "home"
+    ]
+   }
+  },
+  {
+   "id": "h-format-5",
+   "kind": "format",
+   "input": "Tags: urgent, billing. Sharpen the tools. Priority 2.",
+   "want": {
+    "title": "Sharpen the tools",
+    "priority": 2,
+    "tags": [
+     "urgent",
+     "billing"
+    ]
+   }
+  },
+  {
+   "id": "h-format-6",
+   "kind": "format",
+   "input": "Pay the insurance. Priority: 5. Tags - billing, art",
+   "want": {
+    "title": "Pay the insurance",
+    "priority": 5,
+    "tags": [
+     "billing",
+     "art"
+    ]
+   }
+  },
+  {
+   "id": "h-format-7",
+   "kind": "format",
+   "input": "Sort the receipts. Priority 2. Tags: team, garden.",
+   "want": {
+    "title": "Sort the receipts",
+    "priority": 2,
+    "tags": [
+     "team",
+     "garden"
+    ]
+   }
+  },
+  {
+   "id": "h-format-8",
+   "kind": "format",
+   "input": "Plan the workshop. Priority 2. Tags: team, garden.",
+   "want": {
+    "title": "Plan the workshop",
+    "priority": 2,
+    "tags": [
+     "team",
+     "garden"
+    ]
+   }
+  },
+  {
+   "id": "h-format-9",
+   "kind": "format",
+   "input": "Fix the bike light (priority 1), tagged urgent and admin.",
+   "want": {
+    "title": "Fix the bike light",
+    "priority": 1,
+    "tags": [
+     "urgent",
+     "admin"
+    ]
+   }
+  },
+  {
+   "id": "h-format-10",
+   "kind": "format",
+   "input": "Test the backup. Priority 3. Tags: team, urgent.",
+   "want": {
+    "title": "Test the backup",
+    "priority": 3,
+    "tags": [
+     "team",
+     "urgent"
+    ]
+   }
+  }
+ ],
+ "instructions": {
+  "classify": {
+   "label": "Review",
+   "prose": "Hello! I hope you are doing well. I would really appreciate it if you could please read the customer review below and tell me whether its overall sentiment is positive, negative or neutral. Please reply with just that one word and nothing else, with no punctuation and no explanation. Thank you so much for your help!",
+   "terse": "Classify the review's sentiment.\nReply with one word: positive, negative or neutral.\nNo other text.",
+   "schema": "Task: sentiment of a review\nOutput: positive | negative | neutral\nFormat: one word, nothing else",
+   "code": "def sentiment(review: str) -> Literal[\"positive\", \"negative\", \"neutral\"]:\n    \"\"\"Overall sentiment of the review. Output the return value only: one word.\"\"\"",
+   "mixed": "Judge the overall sentiment of the review, as a careful reader would.\nOutput: positive | negative | neutral (one word, nothing else)",
+   "abbrev": "Clsfy rvw sntmnt.\nRply 1 wrd: positive, negative or neutral.\nNo othr txt."
+  },
+  "extract": {
+   "label": "Line",
+   "prose": "Hi there! Below you will find a single line taken from an invoice or a receipt. Could you please find the date and the amount of money in it for me? I need the date written as year, month and day in the form YYYY-MM-DD, and I need the amount as a plain number without a dollar sign or any commas. Please give me your answer as a JSON object that has the two keys date and amount, and please do not add any other words or explanation. Thanks a lot!",
+   "terse": "Find the date and the amount in the line.\nReturn JSON with keys date and amount.\nDate as YYYY-MM-DD. Amount as a plain number, no $ or commas.\nJSON only.",
+   "schema": "Task: extract from an invoice line\nOutput: {\"date\": \"YYYY-MM-DD\", \"amount\": number}\nFormat: JSON only",
+   "code": "def extract(line: str) -> dict:\n    \"\"\"Return {\"date\": \"YYYY-MM-DD\", \"amount\": float} found in the line.\n    Output the return value only, as JSON.\"\"\"",
+   "mixed": "Read the line and find when it happened and how much it was for.\nOutput: {\"date\": \"YYYY-MM-DD\", \"amount\": number}\nJSON only.",
+   "abbrev": "Fnd date & amt in line.\nRtrn JSON w/ keys date & amount.\nDate as YYYY-MM-DD. Amt as plain nmbr, no $ or commas.\nJSON only."
+  },
+  "calculate": {
+   "label": "Figures",
+   "prose": "Hello! I am trying to work out whether something is worth buying. Below I have listed the price of the item, how much money it saves me each time I use it, and the number of times I expect to use it. Could you please work out my net saving for me? That is the saving per use multiplied by the number of uses, with the price then taken away. Please reply with only the final number, without a dollar sign and without any explanation. Thank you very much!",
+   "terse": "Work out the net saving: saving per use times uses, minus price.\nReply with the number only. No $ and no explanation.",
+   "schema": "Task: net saving\nFormula: saving_per_use * uses - price\nOutput: number\nFormat: number only",
+   "code": "def net_saving(price: float, saving_per_use: float, uses: int) -> float:\n    return saving_per_use * uses - price\n# Output the return value only: a number.",
+   "mixed": "Work out whether the purchase pays for itself.\nnet = saving_per_use * uses - price\nOutput: net (number only)",
+   "abbrev": "Wrk out net svng: svng per use x uses, mns price.\nRply w/ nmbr only. No $ & no explntn."
+  },
+  "format": {
+   "label": "Note",
+   "prose": "Hi! Below is a short note describing something I need to do. I would be grateful if you could please turn it into a JSON object for my to-do list. The object should have a key called title containing the task itself as text without the full stop at the end, a key called priority containing the priority as a whole number, and a key called tags containing a list of the tags as lower case strings. Please reply with the JSON object only and do not add anything else. Many thanks!",
+   "terse": "Turn the note into a JSON object.\nKeys: title (the task, no final full stop), priority (whole number), tags (list of lower case strings).\nJSON only.",
+   "schema": "Task: note to record\nOutput: {\"title\": string, \"priority\": integer, \"tags\": [string]}\nRules: title has no final full stop; tags lower case\nFormat: JSON only",
+   "code": "def to_record(note: str) -> dict:\n    \"\"\"Return {\"title\": str, \"priority\": int, \"tags\": list[str]}.\n    Title has no final full stop. Tags are lower case.\n    Output the return value only, as JSON.\"\"\"",
+   "mixed": "Turn the note into a to-do record. The title is the task itself, without its final full stop.\nOutput: {\"title\": string, \"priority\": integer, \"tags\": [lower case strings]}\nJSON only.",
+   "abbrev": "Trn note into JSON obj.\nKeys: title (task, no fnl full stop), priority (whole nmbr), tags (list of lwr case strs).\nJSON only."
+  }
+ }
+}

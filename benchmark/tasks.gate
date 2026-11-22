@@ -1,0 +1,32 @@
+# The relation gate for the four task kinds (design R in PLAN.md). A deterministic checker: no model call.
+# Each gate sees the answer's text and the task's input, never the right answer. pass is 0/1 arithmetic over facts.
+# `after 3: stop` is the cap: three tries, then the design abstains rather than hand over an unchecked answer.
+
+gate classify(text):
+    word = /^\W*(?i:positive|negative|neutral)\W*$/ in text
+    pass = word
+    after 3: stop
+
+gate extract(text):
+    shape   = json(text)
+    fields  = keys(text) = date, amount
+    date    = /"date"\s*:\s*"\d{4}-\d{2}-\d{2}"/ in text
+    amount  = /"amount"\s*:\s*-?\d+(\.\d+)?\s*[,}]/ in text
+    when    = dates(text) in input
+    sourced = numbers(text) in input
+    pass = shape * fields * date * amount * when * sourced
+    after 3: stop
+
+gate calculate(text):
+    number = /^-?\d+(\.\d+)?$/ in text
+    pass = number
+    after 3: stop
+
+gate format(text):
+    shape    = json(text)
+    fields   = keys(text) = title, priority, tags
+    priority = /"priority"\s*:\s*\d+\s*[,}]/ in text
+    tags     = /"tags"\s*:\s*\[/ in text
+    sourced  = strings(text) in input
+    pass = shape * fields * priority * tags * sourced
+    after 3: stop
