@@ -127,7 +127,14 @@ print('the task facts: json shape, keys, numbers and strings sourced from the in
 q = Program('gate extract(text):\n    shape = json(text)\n    fields = keys(text) = date, amount\n    sourced = numbers(text) in input\n    pass = shape * fields * sourced\n'
             'gate note(text):\n    shape = json(text)\n    fields = keys(text) = title, priority, tags\n    sourced = strings(text) in input\n    pass = shape * fields * sourced')
 line = 'Paid on March 3, 2026: annual licence renewal, $240.00, ref LX-88.'
-assert q.check('extract', '{"date": "2026-03-03", "amount": 240}', input=line, key='a').v['pass'] == 1, 'a sourced answer passes'
+r = q.check('extract', '{"date": "2026-03-03", "amount": 240}', input=line, key='a').v
+assert r == {'pass': 1, 'shape': 1, 'fields': 1, 'sourced': 1, 'tokens': 10, 'spent': 10}, r
+r = q.check('extract', '{"date": "2026-03-03", "amount": 240}', input='Paid $240.00 on 2026-03-03.', key='a2').v
+assert r['pass'] == 1 and r['sourced'] == 1, 'an answer whose numbers are exactly the input\'s numbers is sourced'
+r = q.check('note', '{"title": "Fix the gallery signature", "priority": 2, "tags": ["art", "urgent"]}', input='Fix the gallery signature. Priority 2. Tags: art, urgent.', key='n1').v
+assert r == {'pass': 1, 'shape': 1, 'fields': 1, 'sourced': 1, 'tokens': 20, 'spent': 20}, r
+q2 = Program('gate when(text):\n    when = dates(text) in input\n    pass = when')
+assert q2.check('when', '2026-03-03', input='March 3, 2026', key='w').v == {'pass': 1, 'when': 1, 'tokens': 3, 'spent': 3}
 assert q.check('extract', '```json\n{"date": "2026-03-03", "amount": 240}\n```', input=line, key='b').v['pass'] == 1, 'a code fence is allowed'
 r = q.check('extract', '{"date": "2026-03-03", "amount": 2400}', input=line, key='c').v
 assert r['pass'] == 0 and r['sourced'] == 0, 'an amount not in the input fails the source fact'
@@ -184,7 +191,11 @@ check('a bridge of matching hands is refused', q.seam('c1', 'c4'), 'refuse: brid
 check('a declared bridge', q.seam('c3', 'c2'), 'bridged: c3 is z+, c2 is z-; the crossover is declared')
 check('not joined', q.seam('c2', 'c4'), 'refuse: c2 and c4 are not joined')
 assert len(q.lattice()) == 4
+assert q.cells['c1'].name == 'c1' and q.cells['c2'].name == 'c2' and q.cells['c4'].axis == 'z' and q.cells['c4'].hand == '+'
 passed += 1; print('  ok  the lattice reports every seam')
+q = Program('cell c1 = saddle(axis x, hand -)\nblock b(x) -> y:\n    y = x + 1\njoin c1 b via x\njoin c1 c1')
+assert [(a, b) for a, b, _ in q.lattice()] == [('c1', 'c1')], 'a join that names a block is not a seam between cells'
+passed += 1; print('  ok  only joins between two cells are seams')
 
 print('rules by name inside blocks, and blocks joined via a variable')
 q = Program('rule pue: pue = total / it   [Established] "Uptime Institute, 2026"\n'
@@ -198,6 +209,8 @@ check('no join, no crossing', q.ask_lattice('gallons', it=100, pue=1.52, hours=2
 check('a derived value does not cross where no join names it', q.ask_lattice('cost', it=100, pue=1.52, hours=8760), 'refuse: no block can reach cost from what is given and what the joins carry')
 q = Program('block a(x) -> y:\n    y = 2 * x\nblock b(x) -> y:\n    y = 3 * x\nblock c(y) -> z:\n    z = y + 1\njoin a c via y\njoin b c via y')
 check('neighbours that disagree are refused', q.ask_lattice('z', x=5), 'refuse: y disagrees between neighbours: a says 10, b says 15')
+q = Program('block a(x) -> y:\n    y = 2 * x\nblock b(x) -> y:\n    y = x + x\nblock c(y) -> z:\n    z = y + 1\njoin a c via y\njoin b c via y')
+check('neighbours that agree are trusted', q.ask_lattice('z', x=5), '11')
 q = Program('block a(x) -> y:\n    y = 2 * x\nblock b(y) -> z:\n    z = y + 1\njoin a b via y')
 check('a missing value is re-derived by the neighbour (self-healing)', q.ask_lattice('x', z=11), '5')
 try:

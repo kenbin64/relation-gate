@@ -69,6 +69,17 @@ scored 76 percent; the gaps it showed became 18 new tests and two real bug fixes
 to a plain True instead of a comparison; fork values came back in hash order, so the same question could
 print its two answers in either order).
 
+With cells, seams and joined blocks added (2026-11-22): 279 bugs planted, 244 caught (87 percent), 35 survived.
+The first pass over the survivors found five real gaps and they became five tests (the lattice must not treat a
+block join as a seam, agreeing neighbours must be trusted, every fact must be exactly 1 not merely true, an
+answer whose numbers are exactly the input's numbers is sourced, dates read in six forms); the second pass found
+one more (a saddle cell's own name) and it became an assertion after the run. The remaining survivors are
+equivalent or unreachable: the sample points the turn table is read from (any distinct values give the same
+table), a loop bound past the three axes, a comparison on a value that is always plus or minus one, `maxsplit`
+arguments, a default that is always passed explicitly, and `return None` lines that were already None. The run
+also found a second bug in the runner itself: a planted bug that turned the lattice's propagation into a loop
+that never ends hung the test process and crashed the runner; a hanging mutant now counts as caught by the clock.
+
 One lesson for anyone writing a mutation runner: the first versions of this one reported 94 to 96 percent,
 and which equivalent mutants "died" changed between runs. The cause was Python's bytecode cache: a mutant
 written within the same second as the last one, with the same file size, ran the previous mutant's compiled
