@@ -76,6 +76,21 @@ class Climb:
 
 
 @dataclass
+class Cell:
+    """A saddle in a cube: an axis (the direction it bridges) and a hand (+ or -). The saddle z = xy has exactly six
+    orientations under the 24 rotations of a cube (measured 2026-11-21): three axes, two hands."""
+    name: str; axis: str; hand: str
+
+
+@dataclass
+class Join:
+    """Two cells share a face, or two blocks share a variable. Cells join only when their hands match across the
+    face (lock and key); a bridge is a mismatch made on purpose. Blocks joined via a variable re-derive it for each
+    other: every point knows its neighbour."""
+    a: str; b: str; via: str = ''; bridge: bool = False
+
+
+@dataclass
 class Gate:
     """A truth table over facts, with two caps: tries (`after n: stop`) and tokens (`within n tokens: stop`).
     z = token: when the level under the gate is a model, what crosses the gate is text, and text is priced in
@@ -104,6 +119,31 @@ NUMBERS_FACT = re.compile(r'(\w+)\s*=\s*numbers\((\w+)\)\s+in\s+input\s*$')    #
 DATES_FACT = re.compile(r'(\w+)\s*=\s*dates\((\w+)\)\s+in\s+input\s*$')        # every date in it occurs in the input, in any written form
 STRINGS_FACT = re.compile(r'(\w+)\s*=\s*strings\((\w+)\)\s+in\s+input\s*$')    # every JSON string value occurs in the input
 QUERY = re.compile(r'(\w+)\s*=\s*(\w+)\?\((.*)\)(?:\s*decide\s+(.+))?\s*$')
+CELL_SADDLE = re.compile(r'cell\s+(\w+)\s*=\s*saddle\(\s*axis\s+([xyz])\s*,\s*hand\s*([+-])\s*\)\s*$')
+CELL_TURN = re.compile(r'cell\s+(\w+)\s*=\s*turn\(\s*(\w+)\s*,\s*about\s+([xyz])\s*\)\s*$')
+JOIN = re.compile(r'(join|bridge)\s+(\w+)\s+(\w+)(?:\s+via\s+(\w+))?\s*$')
+USE = re.compile(r'use\s+(\w+)\s*$')
+
+# A quarter turn of a saddle about a cube axis. Computed, not typed: rotate the points of z = hand * x * y and read
+# off which axis is now the height and which hand it has. The same method that found the six orientations.
+ROTATE = {'x': lambda x, y, z: (x, -z, y), 'y': lambda x, y, z: (z, y, -x), 'z': lambda x, y, z: (-y, x, z)}
+AXES = 'xyz'
+
+
+def turned(axis, hand, about):
+    """The (axis, hand) of a saddle after a quarter turn about `about`."""
+    i = AXES.index(axis); j, k = [n for n in range(3) if n != i]
+    sign = 1 if hand == '+' else -1
+    points = []
+    for a in (-1, 0, 1, 2):
+        for b in (-1, 0, 1, 2):
+            p = [0, 0, 0]; p[j], p[k], p[i] = a, b, sign * a * b
+            points.append(ROTATE[about](*p))
+    for h in range(3):
+        u, v = [n for n in range(3) if n != h]
+        for s in (1, -1):
+            if all(p[h] == s * p[u] * p[v] for p in points): return AXES[h], '+' if s > 0 else '-'
+    raise ValueError('a quarter turn of a saddle is always a saddle; this cannot happen')
 
 
 def strip_comment(line):
@@ -174,6 +214,7 @@ def decides(rule, target, value):
 class Program:
     def __init__(self, text):
         self.rules, self.blocks, self.climbs, self.gates = {}, {}, {}, {}
+        self.cells, self.joins = {}, []
         self._parse(text)
 
     def _parse(self, text):
@@ -196,6 +237,19 @@ class Program:
             self.rules[name] = Rule(name, lhs, rhs, label, source)
             return None
         if line.startswith('rule'): raise SyntaxError(f'a rule needs a label and a source: {line}')
+        m = CELL_SADDLE.match(line)
+        if m:
+            self.cells[m.group(1)] = Cell(m.group(1), m.group(2), m.group(3)); return None
+        m = CELL_TURN.match(line)
+        if m:
+            name, other, about = m.groups()
+            if other not in self.cells: raise SyntaxError(f'cell {name}: no cell called {other} to turn')
+            axis, hand = turned(self.cells[other].axis, self.cells[other].hand, about)
+            self.cells[name] = Cell(name, axis, hand); return None
+        m = JOIN.match(line)
+        if m:
+            kind, a, b, via = m.groups()
+            self.joins.append(Join(a, b, via or '', kind == 'bridge')); return None
         m = HEAD.match(line)
         if not m: raise SyntaxError(f'cannot read: {line}')
         kind, name, params, out = m.groups()
@@ -244,9 +298,61 @@ class Program:
     def _equations(self, block):
         eqs = []
         for rel in block.relations:
+            m = USE.match(rel)                                   # `use name`: the named rule's relation, by reference
+            if m:
+                if m.group(1) not in self.rules: raise SyntaxError(f'{block.name} uses a rule that does not exist: {m.group(1)}')
+                r = self.rules[m.group(1)]; rel = f'{r.lhs} = {r.rhs}'
             lhs, rhs = rel.split('=', 1)
             eqs.append(Eq(sympify(lhs.replace('^', '**')), sympify(rhs.replace('^', '**'))))
         return eqs
+
+    # ------------------------------------------------------------------------------------------ cells and seams
+    def seam(self, a, b):
+        """What happens where two cells meet: joined (hands match), bridged (a mismatch made on purpose), or a refusal."""
+        join = next((j for j in self.joins if {j.a, j.b} == {a, b}), None)
+        if join is None: return Refuse(f'{a} and {b} are not joined')
+        ca, cb = self.cells[a], self.cells[b]
+        match = (ca.axis, ca.hand) == (cb.axis, cb.hand)
+        if match and not join.bridge: return Value(f'joined: both {ca.axis}{ca.hand}, the surface is continuous across the face')
+        if match and join.bridge: return Refuse(f'bridge {a} {b}: the hands already match ({ca.axis}{ca.hand}); a bridge is for a mismatch')
+        if join.bridge: return Value(f'bridged: {a} is {ca.axis}{ca.hand}, {b} is {cb.axis}{cb.hand}; the crossover is declared')
+        return Refuse(f'{a} ({ca.axis}{ca.hand}) and {b} ({cb.axis}{cb.hand}) do not match across the face; turn one, or bridge on purpose')
+
+    def lattice(self):
+        """Every seam's verdict, in the order the joins were written."""
+        return [(j.a, j.b, self.seam(j.a, j.b)) for j in self.joins if j.a in self.cells and j.b in self.cells]
+
+    # ------------------------------------------------------------------------------------------ joined blocks
+    def ask_lattice(self, target, **known):
+        """Read a variable across blocks joined `via` shared variables. A value derived inside one block crosses to
+        a neighbour only through a declared join, and only for the variable the join names. Two neighbours that
+        derive the same variable must agree, or the lattice refuses: every point knows its neighbour, and a point
+        that contradicts its neighbour is not trusted. A variable the asker gives is known to every block."""
+        values = {k: (sympify(v), 'given') for k, v in known.items()}
+        derived = {}                                              # (block, var) -> value, to stop re-deriving
+        changed = True
+        while changed:
+            changed = False
+            for name, block in self.blocks.items():
+                if block.facts: continue
+                symbols = {str(s) for e in self._equations(block) for s in e.free_symbols}
+                seen = {v: values[v][0] for v in symbols if v in values and self._reaches(values[v][1], name, v)}
+                for var in symbols - set(seen):
+                    if (name, var) in derived: continue
+                    r = self._ask_algebra(block, var, seen, None)
+                    if not isinstance(r, Value): continue
+                    derived[(name, var)] = r.v; changed = True
+                    if var in values and values[var][1] != name and sympify(values[var][0]) != r.v:
+                        return Refuse(f'{var} disagrees between neighbours: {values[var][1]} says {values[var][0]}, {name} says {r.v}')
+                    if var not in values: values[var] = (r.v, name)
+        if target in values: return Value(values[target][0])
+        return Refuse(f'no block can reach {target} from what is given and what the joins carry')
+
+    def _reaches(self, origin, block, var):
+        """May a value of `var` that came from `origin` be used inside `block`? Given values reach everywhere; a
+        derived value crosses only a join that names the variable."""
+        if origin in ('given', block): return True
+        return any({j.a, j.b} == {origin, block} and j.via == var for j in self.joins)
 
     def _ask_algebra(self, block, target, known, decide):
         subs = {Symbol(k): sympify(v) for k, v in known.items()}

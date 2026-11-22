@@ -97,6 +97,18 @@ ask('tpc = tokens_per_correct?(tokens = 3210, correct = 30)')
 ask('correct = tokens_per_correct?(tokens = 10000, tpc = 107)')
 ask('tokens = tokens_per_correct?(correct = 1000, tpc = 107)')
 
+print('\n6. cells and seams: six orientations, a quarter turn, a join that refuses, a bridge that is declared')
+cells = Program('cell c1 = saddle(axis z, hand +)\ncell c2 = turn(c1, about z)\ncell c3 = turn(c2, about z)\ncell c4 = turn(c1, about x)\n'
+                'join c1 c3\njoin c1 c2\nbridge c1 c2\njoin c1 c4')
+for name, c in cells.cells.items(): print(f'   {name}: axis {c.axis}, hand {c.hand}')
+for a, b, verdict in cells.lattice(): print(f'   {a} {b}: {verdict!r}')
+
+print('\n7. blocks joined via a variable: a value crosses a declared seam, neighbours must agree, a missing value is re-derived')
+lattice = Program(PROGRAM + '\nblock carbon(total, hours, intensity) -> tonnes:\n    tonnes = total * hours * intensity / 1000\njoin datacentre carbon via total\n')
+ask(lambda: lattice.ask_lattice('tonnes', it=100, pue=1.52, hours=8760, price=80, gallons_per_mwh=750, intensity=0.4), label='tonnes of CO2 through the seam (total crosses from datacentre to carbon)')
+ask(lambda: lattice.ask_lattice('it', tonnes=532.608, hours=8760, intensity=0.4, pue=1.52, price=80, gallons_per_mwh=750), label='the computing load, re-derived backward through the seam')
+ask(lambda: lattice.ask_lattice('tonnes', it=100, hours=8760, price=80, gallons_per_mwh=750, intensity=0.4), label='without pue nothing reaches the seam: refuse')
+
 print('\nledger generated from the rules in the program:')
 for name, rel, label, source in p.ledger():
     print(f'   {name:18s} {rel:28s} {label:14s} {source}')

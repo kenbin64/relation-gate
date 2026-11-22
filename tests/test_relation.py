@@ -157,6 +157,54 @@ r = q.check('extract', '{"date": "2026-01-08", "amount": 12400.00}', input='On 7
 assert r['pass'] == 0 and r['when'] == 0, r
 passed += 1; print('  ok  a worded date in the input sources an ISO date in the answer; a wrong day is refused')
 
+print('cells: six orientations, turns, seams')
+from relation import turned
+seen = set()
+for axis in 'xyz':
+    for hand in '+-':
+        seen.add((axis, hand))
+        assert turned(axis, hand, axis) == (axis, '-' if hand == '+' else '+'), 'a quarter turn about the cell\'s own axis flips the hand'
+        a, h = axis, hand
+        for _ in range(4): a, h = turned(a, h, 'x')
+        assert (a, h) == (axis, hand), 'four quarter turns is the identity'
+        assert turned(axis, hand, 'x')[0] != axis or axis == 'x', 'a turn about another axis changes which axis the saddle bridges'
+orbit, frontier = {('z', '+')}, [('z', '+')]              # every orientation reachable from one saddle by quarter turns
+while frontier:
+    a, h = frontier.pop()
+    for about in 'xyz':
+        t = turned(a, h, about)
+        if t not in orbit: orbit.add(t); frontier.append(t)
+assert orbit == seen, orbit
+passed += 1; print('  ok  the six orientations are the whole orbit; own-axis turns flip the hand; four turns is the identity')
+q = Program('cell c1 = saddle(axis z, hand +)\ncell c2 = turn(c1, about z)\ncell c3 = turn(c2, about z)\ncell c4 = saddle(axis z, hand +)\n'
+            'join c1 c3\njoin c1 c2\nbridge c1 c4\nbridge c3 c2')
+check('matching hands join', q.seam('c1', 'c3'), 'joined: both z+, the surface is continuous across the face')
+check('a quarter turn breaks the join', q.seam('c1', 'c2'), 'refuse: c1 (z+) and c2 (z-) do not match across the face; turn one, or bridge on purpose')
+check('a bridge of matching hands is refused', q.seam('c1', 'c4'), 'refuse: bridge c1 c4: the hands already match (z+); a bridge is for a mismatch')
+check('a declared bridge', q.seam('c3', 'c2'), 'bridged: c3 is z+, c2 is z-; the crossover is declared')
+check('not joined', q.seam('c2', 'c4'), 'refuse: c2 and c4 are not joined')
+assert len(q.lattice()) == 4
+passed += 1; print('  ok  the lattice reports every seam')
+
+print('rules by name inside blocks, and blocks joined via a variable')
+q = Program('rule pue: pue = total / it   [Established] "Uptime Institute, 2026"\n'
+            'block building(it) -> total:\n    use pue\n'
+            'block bill(total, hours, price) -> cost:\n    cost = total * hours * price\n'
+            'join building bill via total\n'
+            'block water(it) -> gallons:\n    gallons = it * hours * per_mwh\n')
+check('a rule used by name', q.run('total = building?(it = 100, pue = 1.52)'), '152.000000000000')
+check('a value crosses a join', q.ask_lattice('cost', it=100, pue=1.52, hours=8760, price=80), '106521600.000000')
+check('no join, no crossing', q.ask_lattice('gallons', it=100, pue=1.52, hours=24, per_mwh=750), '1800000')
+check('a derived value does not cross where no join names it', q.ask_lattice('cost', it=100, pue=1.52, hours=8760), 'refuse: no block can reach cost from what is given and what the joins carry')
+q = Program('block a(x) -> y:\n    y = 2 * x\nblock b(x) -> y:\n    y = 3 * x\nblock c(y) -> z:\n    z = y + 1\njoin a c via y\njoin b c via y')
+check('neighbours that disagree are refused', q.ask_lattice('z', x=5), 'refuse: y disagrees between neighbours: a says 10, b says 15')
+q = Program('block a(x) -> y:\n    y = 2 * x\nblock b(y) -> z:\n    z = y + 1\njoin a b via y')
+check('a missing value is re-derived by the neighbour (self-healing)', q.ask_lattice('x', z=11), '5')
+try:
+    Program('block k(x) -> y:\n    use nothing').ask('k', 'y', x=1); raise AssertionError('used a rule that does not exist')
+except SyntaxError as e:
+    passed += 1; print(f'  ok  {e}')
+
 print('rules without a source do not parse')
 try:
     Program('rule bad: z = x * y')

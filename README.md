@@ -122,7 +122,33 @@ statistical attack with rotors I to III, ring settings at A and a short plugboar
 about 15 cities by the fold, not beyond. The first cube model, wired by hand, was caught by its own identity
 checks (R U R' U' must have order 6) and replaced with the standard cubie model.
 
+## Cells, seams and joined blocks (built 2026-11-22)
+
+    cell c1 = saddle(axis z, hand +)      a saddle in a cube: the axis it bridges and its hand
+    cell c2 = turn(c1, about z)           a quarter turn; about the cell's own axis it flips the hand
+    join c1 c2                            the seam: joined only when both cells have the same axis and hand
+    bridge c1 c2                          a mismatch made on purpose, declared; refused if the hands already match
+
+A saddle has exactly six orientations under the rotations of a cube, three axes by two hands, and the turn table
+is computed from the rotation of the saddle's own points, not typed in. `program.seam(a, b)` gives the verdict at
+one seam, `program.lattice()` at every seam.
+
+    block building(it) -> total:
+        use pue                           a rule referenced by name inside a block
+    block bill(total, hours, price) -> cost:
+        cost = total * hours * price
+    join building bill via total          blocks joined through a shared variable
+
+`program.ask_lattice('cost', it=100, pue=1.52, hours=8760, price=80)` reads a variable across joined blocks. A value
+derived inside one block crosses to a neighbour only through a join that names the variable; a value the asker
+gives is known everywhere. Two neighbours that derive the same variable must agree or the lattice refuses, and a
+value one block is missing is re-derived from its neighbour through the join. That is the Kravitz rule in code:
+every point knows its neighbour, the rule is shared, and a point that contradicts its neighbour is not trusted.
+
 ## Not built yet
 
-Cells (`saddle`, `turn`, `join`, `bridge`), rules referenced by name inside blocks, and the benchmark run that
-would decide whether a `gate` written here beats a prompt-only gate on tokens per correct answer.
+Relation tokens through a fine-tune (so a field name or a source clause is one token instead of several), the
+residual output form (the model states only what a software reading could not settle), and the date relation
+marking ambiguous written forms such as 01/11/2026 as a fork rather than reading them one way. The benchmark that
+was listed here before, a gate written in the language against a prompt-only gate, has run: see
+`benchmark/RESULTS-RELATION.md`.
