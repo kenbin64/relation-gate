@@ -99,7 +99,7 @@ ask('tokens = tokens_per_correct?(correct = 1000, tpc = 107)')
 
 print('\n6. cells and seams: six orientations, a quarter turn, a join that refuses, a bridge that is declared')
 cells = Program('cell c1 = saddle(axis z, hand +)\ncell c2 = turn(c1, about z)\ncell c3 = turn(c2, about z)\ncell c4 = turn(c1, about x)\n'
-                'join c1 c3\njoin c1 c2\nbridge c1 c2\njoin c1 c4')
+                'join c1 c3\njoin c1 c2\nbridge c3 c2\njoin c1 c4')
 for name, c in cells.cells.items(): print(f'   {name}: axis {c.axis}, hand {c.hand}')
 for a, b, verdict in cells.lattice(): print(f'   {a} {b}: {verdict!r}')
 
